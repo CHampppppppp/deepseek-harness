@@ -1,0 +1,48 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font: var(--dsw-font-m-18);
+}
+
+.description {
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fieldLabel {
+  min-width: 140px;
+  font: var(--dsw-font-s-14);
+}
+
+.textInput {
+  flex: 1;
+  max-width: 360px;
+  font: var(--dsw-font-s-14);
+  padding: 6px 10px;
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-surface-input);
+  border: 1px solid var(--dsw-alias-border-strong);
+  border-radius: 6px;
+}
+
+.volumeValue {
+  min-width: 44px;
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-secondary);
+}
