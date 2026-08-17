@@ -6,7 +6,7 @@ Web 端任务完成提示音插件：会话任务完成时播放提示音，并�
 
 完成触发点是每个会话（无论是否选中）的 running→idle 边沿：`CompletionEdgeTracker` 折叠每份 `ctx.sessions.list` 快照，记录每个会话首次观察到的运行位，并恰好上报一次转换。加载时已空闲的会话永不触发；会话移除会丢弃其跟踪位；复用同一 id 的新会话从零开始。监听器随列表 store 的订阅挂载，并随 apply fiber 一起释放，因此 HMR 移除后不会留下边沿观察者。
 
-播放默认使用 Web Audio 合成的双音提示音（E5 后接 C5，正弦振荡器加柔和包络），因此产品无需附带任何音频资源。配置了 URL 时改由 `new Audio(url)` 播放，并遵循同一音量。`enabled: false` 时两条路径都被抑制。设置行是 `settings.section` 条目：启用复选框写 `enabled`，URL 输入框在失焦时提交，音量滑块写入 0..1 的数字。所有写入都经由设置 scope 落盘到 Host 文档（默认 `$DSH_HOME/settings.yaml`），行组件从 scope 快照重新渲染。
+播放默认使用 Web Audio 合成的双音提示音（E5 后接 C5，正弦振荡器加柔和包络），因此产品无需附带任何音频资源。配置了 URL 时改由 `new Audio(url)` 播放，并遵循同一音量。`enabled: false` 时两条路径都被抑制。设置行是 `settings.section` 条目：启用复选框写 `enabled`，URL 输入框在失焦时提交，音量滑块写入 0..1 的数字。音量变化会按拖动到的音量即时试听一次提示音（即使总开关关闭也发声，便于分辨 0%..100%），这要求 `ui-task-sound` 命名空间对配置客户端暴露--见 `dsh-apiproxy` 的 allowlist。所有写入都经由设置 scope 落盘到 Host 文档（默认 `$DSH_HOME/settings.yaml`），行组件从 scope 快照重新渲染。
 
 ## Model Experience
 

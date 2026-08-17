@@ -164,6 +164,22 @@ describe('ui-task-sound browser apply', () => {
     expect(typeof label === 'function' ? label() : label).toBe('提示音')
     const injected: Record<string, unknown> = entry.inject!(undefined as never)
     expect(injected.scope).toBeDefined()
+    expect(typeof injected.preview).toBe('function')
+  })
+
+  it('previews the chime at the dragged volume, ignoring the master switch', async () => {
+    // A preview sounds even when the chime is disabled: the user is asking
+    // "how loud is this level", not arming the completion signal.
+    const b = await bench(null)
+    declareSection(b.slots)
+    await b.ctx.plugin({ inject: [...inject], apply }, { sink: b.sink }).await()
+    const entry = b.slots.entries(SLOT).find(e => e.component === TaskSoundSection)!
+    const injected = entry.inject!(undefined as never) as {
+      preview: (settings: { enabled: boolean; url: string; volume: number }) => void
+    }
+    injected.preview({ enabled: false, url: '', volume: 0.4 })
+    expect(b.createContext).toHaveBeenCalledTimes(1)
+    await new Promise((resolve) => { setTimeout(resolve, 0) })
   })
 
   it('browser sink creates an AudioContext when available', async () => {

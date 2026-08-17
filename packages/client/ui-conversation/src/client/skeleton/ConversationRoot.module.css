@@ -8,6 +8,8 @@
   flex-direction: column;
   height: 100%;
   min-width: 0;
+  /* Transparent so the shell's body wallpaper shows behind the transcript;
+     reading surfaces above this keep their own fills. */
   background: transparent;
 
   /* Shared width axis for the whole column: one content width W
@@ -256,10 +258,11 @@
   z-index: 7;
   /* Input mask (figma 1205:27463): transcript fades out under a FIXED 36px
      band at the seat's top (the figma 24% of the resting ~150px composer),
-     solid below — px stops, not %, so a growing draft only widens the solid
+     solid below - px stops, not %, so a growing draft only widens the solid
      region and the fade band never stretches. The 0px stop is bg-base at
      zero alpha (not white, which the figma export hardcodes) so both themes
-     fade from their own base. */
+     fade from their own base; the band keeps the input readable over the
+     shell wallpaper. */
   background: linear-gradient(
     180deg,
     color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px,

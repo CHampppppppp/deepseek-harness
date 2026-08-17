@@ -1,8 +1,9 @@
 /**
  * Task-completion chime plugin, browser half. Observes the sessions list for
- * running→idle edges and plays the configured chime; registers the
- * task-sound settings section. No React state outside the settings row, and
- * the audio sink is injected so specs run without a real AudioContext.
+ * running->idle edges and plays the configured chime; registers the
+ * task-sound settings section, previewing the chime while the volume slider
+ * is dragged. No React state outside the settings row, and the audio sink is
+ * injected so specs run without a real AudioContext.
  */
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
@@ -66,6 +67,10 @@ export function apply(ctx: ClientContext, config: TaskSoundPluginConfig = {}): v
     return dispose
   }, 'ui-task-sound: completion-edge listener')
 
+  /** Sound the chime at the dragged volume; previews ignore the master switch, since dragging past 0% must still be audible. */
+  const preview = (settings: TaskSoundSettings): void => {
+    void playChime({ ...settings, enabled: true }, sink)
+  }
   const t = ctx.locale.bind(NS)
   ctx.slots.inject('settings.section', () => ctx.slots.register({
     name: 'settings.section',
@@ -73,6 +78,6 @@ export function apply(ctx: ClientContext, config: TaskSoundPluginConfig = {}): v
     order: 60,
     label: () => t('nav'),
     locale: NS,
-    inject: () => ({ scope }),
+    inject: () => ({ scope, preview }),
   }, TaskSoundSection))
 }

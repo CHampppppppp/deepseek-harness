@@ -22,6 +22,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--dsw-alias-label-primary);
+  /* Full-page wallpaper from the web app's public dir; the token stays as the
+     color behind transparent pixels and while the image loads. */
   background: var(--dsw-alias-bg-base) url('/dsgirl-1.png') center / cover no-repeat;
 }
 
