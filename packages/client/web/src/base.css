@@ -22,7 +22,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--dsw-alias-label-primary);
-  background: var(--dsw-alias-bg-base);
+  background: var(--dsw-alias-bg-base) url('/dsgirl-1.png') center / cover no-repeat;
 }
 
 /* Form controls don't inherit the body font (UA sheets pin their families —
