@@ -445,6 +445,26 @@ describe('settings domain', () => {
       .toEqual({ default: 'minimal' })
   })
 
+  it('serves the task-sound namespace, so the browser volume control persists', async () => {
+    const ctx = await harness()
+    ctx.settings.register(settingsNamespace('ui-task-sound'), z.object({
+      enabled: z.boolean().default(true),
+      url: z.string().default(''),
+      volume: z.number().min(0).max(1).default(0.5),
+    }))
+    const api = createApiProxy(ctx, DEFAULTS)
+
+    // The settings row writes one field at a time; an unexposed namespace makes
+    // the slider snap back to defaults with no error, which is the bug this pins.
+    const view = expectOk(await api.settings.mutate(request({
+      ns: 'ui-task-sound',
+      ops: [{ op: 'set', path: ['volume'], value: 0.8 }],
+    })))
+    expect(view.value).toEqual({ enabled: true, url: '', volume: 0.8 })
+    expect(ctx.settings.describe().find(d => String(d.ns) === 'ui-task-sound')?.value)
+      .toEqual({ enabled: true, url: '', volume: 0.8 })
+  })
+
   it('refuses even a model-provider namespace once its directory entry is gone', async () => {
     const ctx = await harness({ configurableProviders: false })
     ctx.settings.register(NS, AdapterConfig)

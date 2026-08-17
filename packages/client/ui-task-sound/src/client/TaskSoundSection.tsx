@@ -10,10 +10,12 @@ import type { SettingsScope } from '@deepseek-ai/dsh-client-runtime/client'
 import type { TaskSoundSettings } from '../task-sound-settings.ts'
 import css from './TaskSoundSection.module.css'
 
-/** Injected business face: the persisted settings scope (t rides the standard locale seat). */
+/** Injected business face: the persisted settings scope plus a preview chime (t rides the standard locale seat). */
 export interface TaskSoundSectionInjected {
   /** Settings scope bound to the `ui-task-sound` namespace. */
   scope: SettingsScope<TaskSoundSettings>
+  /** Plays the chime at the given settings so a volume change can be heard immediately. */
+  preview: (settings: TaskSoundSettings) => void
 }
 
 /** Full component props: runtime share + locale seat + injected face. */
@@ -28,7 +30,7 @@ const DEFAULTS: TaskSoundSettings = { enabled: true, url: '', volume: 0.5 }
  * @param props - composed slot props.
  * @returns the section element tree.
  */
-export function TaskSoundSection({ scope, t }: TaskSoundSectionProps) {
+export function TaskSoundSection({ scope, preview, t }: TaskSoundSectionProps) {
   const [snapshot, setSnapshot] = useState(() => scope.getSnapshot())
   useEffect(() => scope.subscribe(() => { setSnapshot(scope.getSnapshot()) }), [scope])
   const settings = snapshot.value ?? DEFAULTS
@@ -68,7 +70,11 @@ export function TaskSoundSection({ scope, t }: TaskSoundSectionProps) {
           max={1}
           step={0.05}
           value={settings.volume}
-          onChange={(event) => { void scope.set('volume', Number(event.target.value)) }}
+          onChange={(event) => {
+            const volume = Number(event.target.value)
+            void scope.set('volume', volume)
+            preview({ ...settings, volume })
+          }}
         />
         <span className={css.volumeValue}>{Math.round(settings.volume * 100)}%</span>
       </label>

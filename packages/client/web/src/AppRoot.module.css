@@ -7,7 +7,9 @@
   height: 100%;
   display: grid;
   place-items: center;
-  background: var(--dsw-alias-bg-base, #f9fafb);
+  /* Transparent so the body wallpaper shows during boot; the fallback only
+     applies when the theme tokens have not loaded yet. */
+  background: transparent;
 }
 
 .card {

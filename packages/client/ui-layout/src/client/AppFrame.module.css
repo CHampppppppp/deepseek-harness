@@ -4,7 +4,9 @@
   grid-template-rows: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--dsw-alias-bg-base);
+  /* Transparent so the shell's body wallpaper shows through; the columns and
+     panels above this frame keep their own fills. */
+  background: transparent;
   /* Collapse/expand animates the tracks on the deepsuite sider curve
      (--ds-ease-in-out / --ds-transition-duration-slow, ui-theme base.css). */
   transition: grid-template-columns var(--ds-transition-duration-slow) var(--ds-ease-in-out);

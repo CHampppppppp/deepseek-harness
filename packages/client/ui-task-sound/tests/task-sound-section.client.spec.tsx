@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-/** TaskSoundSection behavior: renders from the scope snapshot, and each
- * control writes its field through the injected settings scope. */
+/** TaskSoundSection behavior: renders from the scope snapshot, each control
+ * writes its field through the injected settings scope, and a volume change
+ * previews the chime at the dragged value. */
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import type { SettingsScope, SettingsScopeSnapshot } from '@deepseek-ai/dsh-client-runtime/client'
@@ -60,12 +61,14 @@ function fakeScope(value?: TaskSoundSettings): {
   }
 }
 
-function mount(scope: SettingsScope<TaskSoundSettings>) {
+function mount(scope: SettingsScope<TaskSoundSettings>, preview: TaskSoundSectionProps['preview'] = vi.fn()) {
   const props: TaskSoundSectionProps = {
     scope,
+    preview,
     t: (key: string) => COPY[key] ?? key,
   }
   render(<TaskSoundSection {...props} />)
+  return { preview }
 }
 
 describe('TaskSoundSection', () => {
@@ -114,7 +117,7 @@ describe('TaskSoundSection', () => {
 
   it('subscribes on mount and unsubscribes on unmount', () => {
     const { scope, subscribe, disposed } = fakeScope({ enabled: true, url: '', volume: 0.5 })
-    const view = render(<TaskSoundSection scope={scope} t={key => COPY[key] ?? key} />)
+    const view = render(<TaskSoundSection scope={scope} preview={vi.fn()} t={key => COPY[key] ?? key} />)
     expect(subscribe).toHaveBeenCalledTimes(1)
     view.unmount()
     expect(disposed.count).toBe(1)
@@ -125,5 +128,12 @@ describe('TaskSoundSection', () => {
     mount(scope)
     fireEvent.change(screen.getByRole('slider'), { target: { value: '0.75' } })
     expect(set).toHaveBeenCalledWith('volume', 0.75)
+  })
+
+  it('previews the chime at the dragged volume', () => {
+    const { scope } = fakeScope({ enabled: true, url: '/ding.mp3', volume: 0.5 })
+    const { preview } = mount(scope, vi.fn())
+    fireEvent.change(screen.getByRole('slider'), { target: { value: '0.75' } })
+    expect(preview).toHaveBeenCalledWith({ enabled: true, url: '/ding.mp3', volume: 0.75 })
   })
 })
