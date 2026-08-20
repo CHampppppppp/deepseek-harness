@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { SlotRegistry } from '@deepseek-ai/dsh-client-runtime/client'
 import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
 import { TestRemote } from '@deepseek-ai/dsh-client-test-runtime'
-import { SettingsScopeBinder } from '@deepseek-ai/dsh-client-ui-settings/client'
+import { apply as settingsApply, inject as settingsInject } from '@deepseek-ai/dsh-client-ui-settings/client'
 import { apply, inject } from '@deepseek-ai/dsh-client-ui-task-sound/client'
 import { TaskSoundSection } from '../src/client/TaskSoundSection.tsx'
 import { TASK_SOUND_SETTINGS_NAMESPACE, TaskSoundSettingsSchema } from '../src/task-sound-settings.ts'
@@ -27,6 +27,7 @@ async function bench(settingsValue?: unknown) {
   const ctx = new Context()
   await ctx.plugin(SlotRegistry).await()
   const locale = new LocaleRuntime(ctx)
+  locale.setLocale('zh')
   ctx.provide('locale', locale)
   const settings = { enabled: true, url: '', volume: 0.5 }
   const namespace = () => ({
@@ -50,7 +51,7 @@ async function bench(settingsValue?: unknown) {
   })
   ctx.provide('connection', { api: { settings: { describe, mutate } }, isLoopback: true } as never)
   new TestRemote(ctx)
-  await ctx.plugin(SettingsScopeBinder).await()
+  await ctx.plugin({ inject: [...settingsInject], apply: settingsApply }).await()
 
   // Sessions service face: a plain snapshot store the test drives.
   let state = emptyList()
@@ -215,10 +216,10 @@ describe('ui-task-sound browser apply', () => {
     })
     vi.stubGlobal('Audio', audioCtor)
     try {
-      const b = await bench()
+      // The settings mirror freezes describe values (dev freeze), so stage the
+      // chime settings through the bench instead of mutating a shared object.
+      const b = await bench({ enabled: true, url: '/custom.mp3', volume: 0.5 })
       declareSection(b.slots)
-      b.settings.url = '/custom.mp3'
-      b.settings.enabled = true
       await b.ctx.plugin({ inject: [...inject], apply }).await()
       b.setList(listOf(summary('a', true)))
       b.setList(listOf(summary('a', false)))
