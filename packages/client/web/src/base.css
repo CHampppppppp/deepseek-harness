@@ -27,9 +27,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--dsw-alias-label-primary, #0f1115);
-  /* Full-page wallpaper from the web app's public dir; the token stays as the
-     color behind transparent pixels and while the image loads. */
-  background: var(--dsw-alias-bg-base, #fff) url('/dsgirl-1.png') center / cover no-repeat;
+  background: var(--dsw-alias-bg-base, #fff);
+  /* Supporting browsers insert CJK/Latin spacing in inherited prose. */
+  text-autospace: normal;
+}
+
+code,
+pre,
+[data-diff],
+[data-read],
+[data-search],
+[data-terminal] {
+  /* Literal payloads retain source spacing and column alignment. */
+  text-autospace: no-autospace;
 }
 
 /* Form controls don't inherit the body font (UA sheets pin their families —
