@@ -6,6 +6,11 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>DSH Local Build</title>
+    <!-- Pre-CSS paint: deep navy while the module graph loads; the theme
+         token takes over as soon as the bundle's styles land. -->
+    <style>
+      html, body { background: #0a1628; }
+    </style>
   </head>
   <body>
     <div id="root"></div>

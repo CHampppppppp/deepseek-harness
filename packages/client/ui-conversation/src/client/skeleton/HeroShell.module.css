@@ -23,12 +23,10 @@
   overflow: visible;
 }
 
-/* figma 34:10411: fish + title, gap 10, centered; 26/32 wt500. The preview
-   badge is a product addition outside that source: a mono superscript pill
-   riding the title's top-right. */
+/* figma 34:10411: fish + title, gap 10, centered; 26/32 wt500. */
 .headline {
   display: grid;
-  grid-template-columns: 34px auto auto;
+  grid-template-columns: 34px auto;
   column-gap: 10px;
   align-items: center;
   justify-content: center;
@@ -43,26 +41,7 @@
   grid-column: 2;
 }
 
-.previewBadge {
-  grid-row: 1;
-  grid-column: 3;
-  align-self: start;
-  margin-top: 2px;
-  margin-left: -3px;
-  padding: 1px 7px 0;
-  border: 1px solid var(--dsw-alias-interactive-bg-hover);
-  border-radius: 24px;
-  background: var(--dsw-alias-state-business-tertiary);
-  color: var(--dsw-alias-label-primary-bluish);
-  font-family: var(--ds-font-family-code);
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* Keep hover detection on a stationary box while the mark moves within it;
-   hover rules target the hitbox so a slot-occupant mark swims too. */
+/* Keep hover detection on a stationary box while the mark moves within it. */
 .fishHitbox {
   grid-row: 1;
   grid-column: 1;
@@ -71,42 +50,35 @@
   justify-content: center;
 }
 
-/* The swim morph's curves poke slightly past the viewBox edges, so clipping
-   would slice the tail mid-wag. The hero mark stays in the same primary ink
-   as its headline. */
+/* Keep the hero mark in the same primary ink as its headline. */
 .fish {
-  display: block;
-  overflow: visible;
-  transform-origin: 50% 60%;
   color: var(--dsw-alias-label-primary);
+  transform-origin: 50% 60%;
 }
 
-/* Hover swim: a slow continuous sway about the body center — the head
-   (left) lifts as the whale rises, then settles back with a small
-   counter-tilt, like treading water. Negative rotation = head up (the head
-   is the left half; origin 50% 60%). */
 @keyframes hero-fish-swim {
-  0%,
-  100% {
-    transform: none;
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
   }
 
   35% {
-    transform: rotate(-4deg) translate(-0.4px, -0.9px);
+    transform: translate(-1px, -1px) rotate(-5deg);
   }
 
   70% {
-    transform: rotate(1.6deg) translate(0.3px, 0.2px);
+    transform: translate(1px, 0) rotate(3deg);
   }
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .fishHitbox:hover .fish {
-    animation: hero-fish-swim 1.6s ease-in-out infinite;
+    animation: hero-fish-swim var(--ds-transition-duration-slow) var(--ds-ease-in-out);
   }
 }
 
-/* Workspace row sits 12px above the input card (figma y80 → y112). */
+/* Workspace row sits 12px above the input card (figma y80 → y112). The blue
+   glow lives with the owner (ConversationRoot .heroGlow) so it can center on
+   the input card. */
 .body {
   position: relative;
   display: flex;
